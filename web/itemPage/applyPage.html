@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta charset="UTF-8">
+<head>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <meta charset="UTF-8">
+<script src="jsFile/prototype.js" type="text/javascript"></script>
+<script src="jsFile/effects.js" type="text/javascript"></script>
+<script type="text/javascript" src="jsFile/validation.js"></script>
+<script type="text/javascript"></script>
+
+<link title="style1" rel="stylesheet" href="styleFile/style.css" type="text/css" />
+
+</head>
+<body>
+	<div class="form_content">
+    <form id="test" action="/untitled/servlet/ApplyServlet" method="post">
+    <fieldset>
+        <legend>个人信息</legend>
+        <div class="form-row">
+            <div class="field-label"><label for="field1">姓名</label>:</div>
+            <div class="field-widget"><input name="name" id="field1" class="required"  /></div>
+        </div>
+
+        <div class="form-row">
+            <div class="field-label"><label for="field1">性别</label>:</div>
+            <div class="field-widget"><input name="gender" class="required"  /></div>
+        </div>
+
+        <div class="form-row">
+            <div class="field-label"><label for="field2">身份证号</label>:</div>
+            <div class="field-widget"><input name="idNumber" id="field2" class="required"  /></div>
+        </div>
+
+        <div class="form-row">
+            <div class="field-label"><label for="field2">联系地址</label>:</div>
+            <div class="field-widget"><input name="address" id="field3" class="required"  /></div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>报名信息</legend>
+        
+        <div class="form-row">
+            <div class="field-label"><label for="field4">联系电话</label>:</div>
+            <div class="field-widget"><input name="phoneNumber" id="field4" class="required"  /></div>
+        </div>
+        
+        <div class="form-row">
+            <div class="field-label"><label for="field5">电子邮箱</label>:</div>
+            <div class="field-widget"><input name="email" id="field5" class="required validate-email" /></div>
+        </div> 
+        
+        <div class="form-row">
+            <div class="field-label"><label for="field6">报考地区</label>:</div>
+            <div class="field-widget">
+                <select id="field6" name="area" class="validate-selection" >
+                    <option>华南地区</option>
+                    <option>华中地区</option>
+                    <option>西南地区</option>
+                    <option>东北地区</option>
+                    <option>西北地区</option>
+                    <option>北京总部</option>
+                </select>
+            </div>
+        </div>
+           
+        <div class="form-row">
+            <div class="field-label"><label >学历</label>:</div>
+            <div class="field-widget">
+                <select id="field7" name="educationBackground" class="validate-selection" >
+                    <option>初中以下</option>
+                    <option>初中</option>
+                    <option>高中/中专</option>
+                    <option>大专</option>
+                    <option>本科</option>
+                    <option>硕士</option>
+                    <option>博士</option>
+                </select>
+            </div>
+        </div>
+    </fieldset>
+
+    <input type="submit" class="submit" value="Submit" /> <input class="reset" type="button" value="Reset" onclick="valid.reset(); return false" />
+    </form>
+    </div>
+    <script type="text/javascript">
+        function formCallback(result, form) {
+            window.status = "valiation callback for form '" + form.id + "': result = " + result;
+        }
+        
+        var valid = new Validation('test', {immediate : true, onFormValidate : formCallback});
+        Validation.addAllThese([
+            ['validate-password', '> 6 characters', {
+                minLength : 7,
+                notOneOf : ['password','PASSWORD','1234567','0123456'],
+                notEqualToField : 'field1'
+            }],
+            ['validate-password-confirm', 'please try again.', {
+                equalToField : 'field8'
+            }]
+        ]);
+        var jq=jQuery.noConflict();
+        function flushPage(){
+            jq.ajax({
+                    url:"/untitled/servlet/ApplyServlet",
+                    type:"get",
+                    dataType:"json",
+                    success: function(data) {
+                        console.log(data);
+                        document.getElementsByName('name')[0].value=data.name;
+                        document.getElementsByName('gender')[0].value=data.gender;
+                        document.getElementsByName('idNumber')[0].value=data.idNumber;
+                        document.getElementsByName('address')[0].value=data.address;
+                        document.getElementsByName('phoneNumber')[0].value=data.phoneNumber;
+                        document.getElementsByName('email')[0].value=data.email;
+                        document.getElementsByName('area')[0].value=data.area;
+                        document.getElementsByName('educationBackground')[0].value=data.educationBackground;
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                                alert(XMLHttpRequest.status);
+                                alert(XMLHttpRequest.readyState);
+                                alert(textStatus);
+                            },
+                        })
+        }
+
+        window.onload = function(){
+            flushPage()       //页面加载完成时添加报名表数据
+        }
+    </script>
+
+</body>
+</html>
